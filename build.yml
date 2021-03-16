@@ -1,0 +1,25 @@
+version: "1.0"
+stages:
+  - "clone"
+  - "build"
+
+steps:
+  clone:
+    title: "Cloning repository"
+    type: "git-clone"
+    repo: "andres-caylent/basic-app"
+    revision: "${{CF_BRANCH}}"
+    git: "andres-caylent"
+    stage: "clone"
+
+  build:
+    title: "Building container image"
+    type: "build"
+    arguments:
+      working_directory: "${{clone}}"
+      image_name: "lucerozuazquita/basic-app"
+      tags:
+      - ${{CF_REVISION}}
+      registry: docker-hub
+      dockerfile: "Dockerfile"
+    stage: build    
