@@ -35,11 +35,6 @@ steps:
 
   call_dummy_pipeline:
     title: call dummy pipeline
-    type: codefresh-run
-    arguments:
-      PIPELINE_ID: poc/pipe-to-dummy
-      # VARIABLE:
-      #   - CF_BRANCH=${{CF_BRANCH}}
-      #   - CF_REVISION=${{CF_REVISION}}
-      #   - APP_VERSION=${{PACKAGE_VERSION}}
+    commands: 
+      - codefresh run codefresh101/pipeline-prod -d
     stage: "post"
