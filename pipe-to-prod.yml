@@ -35,6 +35,7 @@ steps:
 
   call_dummy_pipeline:
     title: call dummy pipeline
+    image: codefresh/cli:latest
     commands: 
       - codefresh run codefresh101/pipeline-prod -d
     stage: "post"
