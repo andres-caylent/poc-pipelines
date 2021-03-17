@@ -20,6 +20,7 @@ steps:
       image_name: "lucerozuazquita/monorepo"
       tags:
       - ${{CF_REVISION}}
+      - ${{CF_BRANCH_TAG_NORMALIZED}}
       registry: docker-hub
       dockerfile: "Dockerfile"
     stage: build    

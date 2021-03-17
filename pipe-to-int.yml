@@ -30,5 +30,5 @@ steps:
     type: argocd-sync
     arguments:
       context: argocd-moved-terrapin
-      app_name: poc-integration
+      app_name: integration
     stage: "deploy" 
