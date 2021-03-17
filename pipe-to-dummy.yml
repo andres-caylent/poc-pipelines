@@ -1,0 +1,15 @@
+version: "1.0"
+
+stages:
+  - "info"
+
+steps:
+  welcome:
+    title: welcome message
+    type: freestyle
+    working_directory: /
+    arguments:
+      image: 'alpine:3.8'
+      commands:
+        - echo "This is just a dummy pipe"
+    stage: "info"      

@@ -1,0 +1,45 @@
+# This pipeline is manually triggered and it should show the available images | and/or it should be triggered after some condition like a healthy preprod app status" 
+version: "1.0"
+stages:
+  - "approval"
+  - "deploy"
+
+steps:
+  
+  sendSlack:
+    type: slack-message-sender
+    arguments:
+      WEBHOOK_URL: '${{SLACK_WEBHOOK_URL}}'
+      MESSAGE: A new deployment to prod has been triggered, please review it here >>>> $CF_BUILD_URL
+    stage: "approval"
+
+  manualapproval:
+    type: pending-approval
+    title: Waiting approval
+    description: whatever description
+    timeout:
+      duration: 2
+      finalState: denied
+    # when:
+    #   branch:
+    #     only: [ master ]
+    stage: "approval"
+
+  sync-argo:
+    title: Sync ArgoCD app and wait
+    type: argocd-sync
+    arguments:
+      context: argocd-moved-terrapin
+      app_name: prod
+    stage: "deploy" 
+
+  call_dummy_pipeline:
+    title: call dummy pipeline
+    type: codefresh-run
+    arguments:
+      PIPELINE_ID: poc/pipe-to-dummy
+      # VARIABLE:
+      #   - CF_BRANCH=${{CF_BRANCH}}
+      #   - CF_REVISION=${{CF_REVISION}}
+      #   - APP_VERSION=${{PACKAGE_VERSION}}
+    stage: "post"

@@ -1,4 +1,4 @@
-# This pipeline is triggered when a PR is merged to the poc-live and the tag has the RC suffix" 
+# This pipeline is triggered when a PR is merged to the poc-live and the tag has the RC suffix ==> At this time it triggers when preprod branches are merged." 
 version: "1.0"
 stages:
   # - "checkingtag"
