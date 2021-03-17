@@ -17,6 +17,7 @@ steps:
         - echo $CF_BRANCH_TAG_NORMALIZED
         - TAG=$CF_BRANCH_TAG_NORMALIZED
         - echo $TAG 
+        - 'cat /codefresh/volume/event.json'
     stage: "checkingtag"
 
   sendSlack:
