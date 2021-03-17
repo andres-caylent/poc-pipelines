@@ -9,7 +9,8 @@ steps:
   sendSlack:
     type: slack-message-sender
     arguments:
-      WEBHOOK_URL: 'https://hooks.slack.com/services/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'
+      # WEBHOOK_URL: 'https://hooks.slack.com/services/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'
+      WEBHOOK_URL: 'https://hooks.slack.com/services/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'
       MESSAGE: There is a new image with INT label. Please approve or reject the deployment to INTEGRATION environment. >>>> $CF_BUILD_URL
     stage: "approval"
 
