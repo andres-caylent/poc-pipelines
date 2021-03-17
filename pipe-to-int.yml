@@ -1,0 +1,34 @@
+# This pipeline is triggered when a image with INT is pushed to the registry" 
+version: "1.0"
+stages:
+  - "approval"
+  - "deploy"
+
+steps:
+
+  sendSlack:
+    type: slack-message-sender
+    arguments:
+      WEBHOOK_URL: 'https://hooks.slack.com/services/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'
+      MESSAGE: There is a new image with INT label. Please approve or reject the deployment to INTEGRATION environment. >>>> $CF_BUILD_URL
+    stage: "approval"
+
+  manualapproval:
+    type: pending-approval
+    title: Waiting approval
+    description: whatever description
+    timeout:
+      duration: 2
+      finalState: denied
+    # when:
+    #   branch:
+    #     only: [ master ]
+    stage: "approval"
+
+  sync-argo:
+    title: Sync ArgoCD app and wait
+    type: argocd-sync
+    arguments:
+      context: argocd-moved-terrapin
+      app_name: poc-integration
+    stage: "deploy" 
