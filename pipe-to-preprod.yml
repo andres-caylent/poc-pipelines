@@ -1,0 +1,56 @@
+# This pipeline is triggered when a PR is merged to the poc-live and the tag has the RC suffix" 
+version: "1.0"
+stages:
+  - "checkingtag"
+  - "approval"
+  - "deploy"
+
+steps:
+  
+  printvars:
+    title: printing variables 
+    type: freestyle
+    # working_directory: "${{clone_basic_app_repo}}"
+    arguments:
+      image: 'alpine:3.8'
+      commands:
+        - echo $CF_BRANCH_TAG_NORMALIZED
+        - TAG=$CF_BRANCH_TAG_NORMALIZED
+        - echo $TAG 
+    stage: "checkingtag"
+
+  sendSlack:
+    type: slack-message-sender
+    arguments:
+      # WEBHOOK_URL: 'https://hooks.slack.com/services/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'
+      WEBHOOK_URL: 'https://hooks.slack.com/services/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'
+      MESSAGE: There is a new image with INT label. Please approve or reject the deployment to INTEGRATION environment. >>>> $CF_BUILD_URL
+    stage: "approval"
+
+  SendToSlack:
+    type: slack-notifier
+    arguments:
+      SLACK_HOOK_URL: 'https://hooks.slack.com/services/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'
+      SLACK_TEXT: 'Hey - There is a new image with INT label. Please approve or reject the deployment to INTEGRATION environment. >>>> $CF_BUILD_URL'
+      # SLACK_ATTACHMENTS: '${{SLACK_ATTACHMENTS}}'
+    stage: "approval"
+
+  manualapproval:
+    type: pending-approval
+    title: Waiting approval
+    description: whatever description
+    timeout:
+      duration: 2
+      finalState: denied
+    # when:
+    #   branch:
+    #     only: [ master ]
+    stage: "approval"
+
+  sync-argo:
+    title: Sync ArgoCD app and wait
+    type: argocd-sync
+    arguments:
+      context: argocd-moved-terrapin
+      app_name: preprod
+    stage: "deploy" 
