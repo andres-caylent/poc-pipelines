@@ -25,14 +25,14 @@ steps:
     arguments:
       # WEBHOOK_URL: 'https://hooks.slack.com/services/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'
       # WEBHOOK_URL: 'https://hooks.slack.com/services/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'
-      WEBHOOK_URL: 'https://hooks.slack.com/services/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'
+      WEBHOOK_URL: '$SLACK_WEBHOOK_URL'
       MESSAGE: There is a new image with INT label. Please approve or reject the deployment to INTEGRATION environment. >>>> $CF_BUILD_URL
     stage: "approval"
 
   SendToSlack:
     type: slack-notifier
     arguments:
-      SLACK_HOOK_URL: 'https://hooks.slack.com/services/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'
+      SLACK_HOOK_URL: '${{SLACK_WEBHOOK_URL}}'
       SLACK_TEXT: 'Hey - There is a new image with INT label. Please approve or reject the deployment to INTEGRATION environment. >>>> $CF_BUILD_URL'
       # SLACK_ATTACHMENTS: '${{SLACK_ATTACHMENTS}}'
     stage: "approval"
