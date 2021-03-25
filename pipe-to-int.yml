@@ -39,7 +39,7 @@ steps:
     repo: "andres-caylent/poc-live"
     # CF_BRANCH value is auto set when pipeline is triggered
     # Learn more at codefresh.io/docs/docs/codefresh-yaml/variables/
-    revision: $MY_TAG
+    revision: "$MY_TAG"
     git: "andres-caylent"
     stage: "deploy"
 
