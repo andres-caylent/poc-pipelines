@@ -39,7 +39,7 @@ steps:
     repo: "andres-caylent/poc-live"
     # CF_BRANCH value is auto set when pipeline is triggered
     # Learn more at codefresh.io/docs/docs/codefresh-yaml/variables/
-    revision: "main"
+    revision: $MY_TAG
     git: "andres-caylent"
     stage: "deploy"
 
@@ -50,7 +50,6 @@ steps:
     arguments:
       image: codefresh/kubectl:1.14.9
       commands:
-        - git branch -r
         - kubectl config get-contexts
         # The config context is automatically placed for you at the path of the variable $CF_KUBECONFIG_PATH. In the current Codefresh implementation this expands to /codefresh/volume/sensitive/.kube/config, inside the shared step volume.
         - kubectl config use-context moved-terrapin
