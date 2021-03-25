@@ -25,10 +25,36 @@ steps:
     #     only: [ master ]
     stage: "approval"
 
-  sync-argo:
-    title: Sync ArgoCD app and wait
-    type: argocd-sync
+  # sync-argo:
+  #   title: Sync ArgoCD app and wait
+  #   type: argocd-sync
+  #   arguments:
+  #     context: argocd-moved-terrapin
+  #     app_name: integration
+  #   stage: "deploy" 
+
+  clone_poc_live_repo:
+    title: "Cloning basic-app repository"
+    type: "git-clone"
+    repo: "andres-caylent/poc-live"
+    # CF_BRANCH value is auto set when pipeline is triggered
+    # Learn more at codefresh.io/docs/docs/codefresh-yaml/variables/
+    revision: "main"
+    git: "andres-caylent"
+    stage: "deploy"
+
+  deploy_w_kustomize:
+    title: deploy using kustomize
+    type: freestyle
+    working_directory: "${{clone_poc_live_repo}}"
     arguments:
-      context: argocd-moved-terrapin
-      app_name: integration
+      image: codefresh/kubectl:1.14.9
+      commands:
+        - git branch -r
+        - kubectl config get-contexts
+        # The config context is automatically placed for you at the path of the variable $CF_KUBECONFIG_PATH. In the current Codefresh implementation this expands to /codefresh/volume/sensitive/.kube/config, inside the shared step volume.
+        - kubectl config use-context moved-terrapin
+        - pwd
+        - kubectl apply -k ./overlays/integration
+        # - kustomize build overlays/staging | kubectl apply -k overlays/staging        
     stage: "deploy" 
