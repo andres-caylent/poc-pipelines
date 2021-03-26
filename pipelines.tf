@@ -44,6 +44,45 @@ resource "codefresh_pipeline" "pipe-build" {
     }
 }
 
+resource "codefresh_pipeline" "pipe-umbrella" {
+    is_public            = false
+    name                 = "poc/pipe-umbrella"
+    tags                 = [] 
+
+    spec {
+        branch_concurrency  = 0 
+        concurrency         = 0 
+        contexts            = [] 
+        priority            = 0 
+        trigger_concurrency = 0 
+        variables           = {
+            # "SLACK_WEBHOOK_URL" = "https://hooks.slack.com/services/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"
+        }
+
+        spec_template {
+            context  = "andres-caylent" 
+            location = "git" 
+            path     = "./pipe-umbrella.yml" 
+            repo     = "andres-caylent/poc-pipelines"
+            revision = "master" 
+        }
+        trigger {
+        context       = "andres-caylent"
+        description   = "Trigger the pipeline on every release"
+        disabled      = false
+        events        = [
+        "release"
+        ]
+        modified_files_glob = ""
+        commit_status_title = "commit-trigger"
+        name                = "trigger_from_commit"
+        provider            = "github"
+        repo                = "andres-caylent/poc-live"
+        type                = "git"
+        }        
+    }
+}
+
 resource "codefresh_pipeline" "pipe-to-int" {
     is_public            = false
     name                 = "poc/pipe-to-int" 
@@ -56,7 +95,7 @@ resource "codefresh_pipeline" "pipe-to-int" {
         priority            = 0 
         trigger_concurrency = 0 
         variables           = {
-            "SLACK_WEBHOOK_URL" = "https://hooks.slack.com/services/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"
+            # "SLACK_WEBHOOK_URL" = "https://hooks.slack.com/services/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"
         }
 
         spec_template {
@@ -101,7 +140,7 @@ resource "codefresh_pipeline" "pipe-to-preprod" {
         priority            = 0 
         trigger_concurrency = 0 
         variables           = {
-            "SLACK_WEBHOOK_URL" = "https://hooks.slack.com/services/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"
+            # "SLACK_WEBHOOK_URL" = "https://hooks.slack.com/services/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"
         }
 
         spec_template {
@@ -143,7 +182,7 @@ resource "codefresh_pipeline" "pipe-to-prod" {
         priority            = 0 
         trigger_concurrency = 0 
         variables           = {
-            "SLACK_WEBHOOK_URL" = "https://hooks.slack.com/services/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"
+            # "SLACK_WEBHOOK_URL" = "https://hooks.slack.com/services/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"
         }
 
         spec_template {
@@ -171,7 +210,6 @@ resource "codefresh_pipeline" "pipe-to-prod" {
         # }       
     }
 }
-
 
 
 
