@@ -10,7 +10,7 @@ steps:
     type: slack-message-sender
     arguments:
       WEBHOOK_URL: '${{SLACK_WEBHOOK_URL}}'
-      MESSAGE: There is a new image with INT label. Please approve or reject the deployment to INTEGRATION environment. >>>> $CF_BUILD_URL
+      MESSAGE: There is a new commit with $TAG label. Please approve or reject the deployment to INTEGRATION environment. >>>> $CF_BUILD_URL
     stage: "approval"
 
   manualapproval:
