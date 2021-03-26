@@ -1,0 +1,96 @@
+# More examples of Codefresh YAML can be found at
+# https://codefresh.io/docs/docs/yaml-examples/examples/
+
+version: "1.0"
+# Stages can help you organize your steps in stages
+stages:
+  - "clone"
+  - "build"
+  - "metadata"
+  - "trigger"
+
+steps:
+  clone:
+    title: "Cloning repository"
+    type: "git-clone"
+    repo: "andres-caylent/poc-live"
+    # CF_BRANCH value is auto set when pipeline is triggered
+    # Learn more at codefresh.io/docs/docs/codefresh-yaml/variables/
+    revision: "${{CF_BRANCH}}"
+    git: "github"
+    stage: "clone"
+  read_trigger_webook:
+    title: "Reading Github webhook content"
+    type: "freestyle" 
+    image: "codefresh/cli:latest" 
+    commands:
+      - cat /codefresh/volume/event.json | jq '.release.tag_name' | awk '{print "VAR1="substr($1, 2, length($1)-2)}' >> ${{CF_VOLUME_PATH}}/env_vars_to_export
+      - cat ${{CF_VOLUME_PATH}}/env_vars_to_export
+      - echo $VAR1
+    stage: "metadata"
+  
+  INT:
+    title: Variable example
+    image: alpine
+    when:
+      condition:
+        all:
+          whenVarExists: 'match("${{VAR1}}", "-INT", true) == true'
+    commands: 
+      - echo $VAR1
+    stage: "metadata"
+  
+  PREPROD:
+    title: Variable example
+    image: alpine
+    when:
+      condition:
+        all:
+          whenVarExists: 'match("${{VAR1}}", "-PREPRD", true) == true'
+    commands: 
+      - echo $VAR1
+    stage: "metadata"
+  
+  PROD:
+    title: Variable example
+    image: alpine
+    when:
+      condition:
+        all:
+          whenVarExists: 'match("${{VAR1}}", "-PRD$", true) == true'
+    commands: 
+      - echo $VAR1
+    stage: "metadata"
+  
+  trigger_int_pipeline:
+      title: Call INT pipeline
+      image: codefresh/cli:latest
+      when:
+        condition:
+          all:
+            whenVarExists: 'match("${{VAR1}}", "-INT", true) == true'
+      commands:
+        - codefresh run poc/pipe-to-int -d  -v TAG=$VAR1
+      stage: "trigger"
+
+  trigger_preprod_pipeline:
+      title: Call PREPROD pipeline
+      image: codefresh/cli:latest
+      when:
+        condition:
+          all:
+            whenVarExists: 'match("${{VAR1}}", "-PREPROD", true) == true'
+      commands:
+        - codefresh run poc/pipe-to-preprod -d  -v TAG=$VAR1
+      stage: "trigger"      
+
+  trigger_prod_pipeline:
+      title: Call PROD pipeline
+      image: codefresh/cli:latest
+      when:
+        condition:
+          all:
+            whenVarExists: 'match("${{VAR1}}", "-PROD", true) == true'
+      commands:
+        - codefresh run poc/pipe-to-prod -d  -v TAG=$VAR1
+      stage: "trigger"         
