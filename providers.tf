@@ -15,4 +15,6 @@ terraform {
 provider "codefresh" {
   api_url = "https://g.codefresh.io/api"
   #token = "<MY API TOKEN>" # If token isn't set the provider expects the $CODEFRESH_API_KEY env variable
+  token = var.codefresh_token
+
 }

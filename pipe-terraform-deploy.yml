@@ -1,0 +1,23 @@
+version: "1.0"
+stages:
+  - "clone"
+  - "terraform"
+
+steps:
+  clone:
+    title: "Cloning repository"
+    type: "git-clone"
+    repo: "andres-caylent/poc-pipelines"
+    revision: "${{CF_BRANCH}}"
+    git: "andres-caylent"
+    stage: "clone"
+
+  terraform:
+    title: "trigger terraform"
+    image: hashicorp/terraform:0.12.0
+    working_directory: "${{clone}}"
+    commands:
+      - terraform init
+      - terraform apply -auto-approve 
+    stage: "terraform" 
+

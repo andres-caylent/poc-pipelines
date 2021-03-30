@@ -3,15 +3,13 @@ version: "1.0"
 stages:
   - "approval"
   - "deploy"
-  - "post"
 
-steps:
-  
+steps:  
   sendSlack:
     type: slack-message-sender
     arguments:
       WEBHOOK_URL: '${{SLACK_WEBHOOK_URL}}'
-      MESSAGE: A new deployment to prod has been triggered, please review it here >>>> $CF_BUILD_URL
+      MESSAGE: A new deployment to PROD environment with $TAG tag has been scheduled. Please approve or reject it here >>>> $CF_BUILD_URL
     stage: "approval"
 
   manualapproval:
@@ -34,9 +32,9 @@ steps:
       app_name: prod
     stage: "deploy" 
 
-  call_dummy_pipeline:
-    title: call dummy pipeline
-    image: codefresh/cli:latest
-    commands: 
-      - codefresh run codefresh101/pipeline-prod -d
-    stage: "post"
+  # call_dummy_pipeline:
+  #   title: call dummy pipeline
+  #   image: codefresh/cli:latest
+  #   commands: 
+  #     - codefresh run codefresh101/pipeline-prod -d
+  #   stage: "post"

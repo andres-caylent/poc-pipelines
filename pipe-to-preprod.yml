@@ -1,30 +1,14 @@
-# This pipeline is triggered when a PR is merged to the poc-live and the tag has the RC suffix ==> At this time it triggers when preprod branches are merged." 
 version: "1.0"
 stages:
-  # - "checkingtag"
   - "approval"
   - "deploy"
 
-steps:
-  
-  # printvars:
-  #   title: printing variables 
-  #   type: freestyle
-  #   # working_directory: "${{clone_basic_app_repo}}"
-  #   arguments:
-  #     image: 'alpine:3.8'
-  #     commands:
-  #       - echo $CF_BRANCH_TAG_NORMALIZED
-  #       - TAG=$CF_BRANCH_TAG_NORMALIZED
-  #       - echo $TAG 
-  #       - 'cat /codefresh/volume/event.json'
-  #   stage: "checkingtag"
-
+steps: 
   sendSlack:
     type: slack-message-sender
     arguments:
       WEBHOOK_URL: '${{SLACK_WEBHOOK_URL}}'
-      MESSAGE: There is a new image with INT label. Please approve or reject the deployment to INTEGRATION environment. >>>> $CF_BUILD_URL
+      MESSAGE: A new deployment to PREPROD environment with $TAG tag has been scheduled. Please approve or reject it here >>>> $CF_BUILD_URL
     stage: "approval"
 
   manualapproval:
@@ -39,10 +23,26 @@ steps:
     #     only: [ master ]
     stage: "approval"
 
-  sync-argo:
-    title: Sync ArgoCD app and wait
-    type: argocd-sync
+  clone_poc_live_repo:
+    title: "Cloning basic-app repository"
+    type: "git-clone"
+    repo: "andres-caylent/poc-live"
+    # CF_BRANCH value is auto set when pipeline is triggered
+    # Learn more at codefresh.io/docs/docs/codefresh-yaml/variables/
+    revision: "${{TAG}}"
+    git: "andres-caylent"
+    stage: "deploy"
+
+  deploy_w_kustomize:
+    title: deploy using kustomize
+    type: freestyle
+    working_directory: "${{clone_poc_live_repo}}"
     arguments:
-      context: argocd-moved-terrapin
-      app_name: preprod
+      image: codefresh/kubectl:1.14.9
+      commands:
+        - kubectl config get-contexts
+        # The config context is automatically placed for you at the path of the variable $CF_KUBECONFIG_PATH. In the current Codefresh implementation this expands to /codefresh/volume/sensitive/.kube/config, inside the shared step volume.
+        - kubectl config use-context moved-terrapin
+        - kubectl apply -k ./overlays/pre-prod
+        # - kustomize build overlays/staging | kubectl apply -k overlays/staging        
     stage: "deploy" 

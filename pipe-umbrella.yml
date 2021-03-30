@@ -30,7 +30,7 @@ steps:
     stage: "metadata"
   
   INT:
-    title: Variable example
+    title: set var
     image: alpine
     when:
       condition:
@@ -41,7 +41,7 @@ steps:
     stage: "metadata"
   
   PREPROD:
-    title: Variable example
+    title: set var
     image: alpine
     when:
       condition:
@@ -52,7 +52,7 @@ steps:
     stage: "metadata"
   
   PROD:
-    title: Variable example
+    title: set var
     image: alpine
     when:
       condition:
