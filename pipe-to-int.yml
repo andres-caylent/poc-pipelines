@@ -10,7 +10,7 @@ steps:
     type: slack-message-sender
     arguments:
       WEBHOOK_URL: '${{SLACK_WEBHOOK_URL}}'
-      MESSAGE: A new deployment to INTEGRATION environment with $TAG tag has been scheduled. Please approve or reject it here >>>> $CF_BUILD_URL
+      MESSAGE: A new deployment to INTEGRATION environment with ${{TAG}} tag has been scheduled. Please approve or reject it here >>>> $CF_BUILD_URL
     stage: "approval"
 
   manualapproval:
